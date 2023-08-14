@@ -13,7 +13,7 @@ export default function Layout() {
   const { $mail } = useMailContext();
 
   return (
-    <div className="flex gap-2 flex-col">
+    <div className="flex flex-col">
       <Interactivity />
       <LayoutItem item={$mail.value} />
     </div>
@@ -40,9 +40,10 @@ function Interactivity() {
         Enable Interactive Mode
       </label>
 
-      <small className="w-full text-gray-500 font-medium -mt-1 opacity-100">
-        In Interactive mode, when you hover in any of the below item, it will
-        highlight the element on email preview.
+      <small className="w-full text-gray-500 -mt-1 opacity-100">
+        In the Interactive mode, when hovering over any of the items below, the
+        corresponding element within the email preview will be highlighted for
+        your attention.
       </small>
     </div>
   );
