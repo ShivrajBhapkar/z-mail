@@ -1,7 +1,7 @@
 import { proxyWithHistory } from "valtio/utils";
 
+import { PropsWithChildren, createContext, useContext, useRef } from "react";
 import { MailItemType, RootItem } from "./types";
-import { createContext, PropsWithChildren, useContext, useMemo } from "react";
 
 export function init(): RootItem {
   return {
@@ -115,8 +115,10 @@ type MailContextContent = {
   $mail: TProxyWithHistory<RootItem>;
 };
 
+const initialValue = init();
+
 export const MailContext = createContext<MailContextContent>({
-  $mail: proxyWithHistory(init()),
+  $mail: proxyWithHistory(initialValue),
 });
 
 export function useMailContext() {
@@ -124,9 +126,11 @@ export function useMailContext() {
 }
 
 export default function MailProvider({ children }: PropsWithChildren) {
-  const $mail = useMemo(() => proxyWithHistory(init()), []);
+  const $mail = useRef(proxyWithHistory(initialValue));
 
   return (
-    <MailContext.Provider value={{ $mail }}>{children}</MailContext.Provider>
+    <MailContext.Provider value={{ $mail: $mail.current }}>
+      {children}
+    </MailContext.Provider>
   );
 }

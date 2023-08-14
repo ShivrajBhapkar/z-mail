@@ -21,8 +21,8 @@ export default function Mail() {
 function MailItem({ item }: { item: RootItem | AnyEmailItem }) {
   if (item.type === "root") {
     return (
-      <Html id={item.id} data-item-type={item.type}>
-        <Container>
+      <Html data-item-type={item.type}>
+        <Container id={item.id}>
           {item.children.map((child) => (
             <MailItem key={child.id} item={child} />
           ))}
@@ -33,7 +33,7 @@ function MailItem({ item }: { item: RootItem | AnyEmailItem }) {
 
   if (item.type === MailItemType.Section) {
     return (
-      <Section>
+      <Section id={item.id}>
         {item.children.map((child) => (
           <MailItem key={child.id} item={child} />
         ))}

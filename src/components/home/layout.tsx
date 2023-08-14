@@ -8,7 +8,6 @@ import { toolsMap } from "./toolbar";
 
 export default function Layout() {
   const { $mail } = useMailContext();
-
   return <LayoutItem item={$mail.value} />;
 }
 
@@ -19,6 +18,22 @@ function LayoutItem({ item }: { item: RootItem | AnyEmailItem }) {
     item.type === "root"
       ? { icon: MailIcon, label: "Mail" }
       : toolsMap[item.type];
+
+  function onActive(event: React.MouseEvent) {
+    event.stopPropagation();
+    window.dispatchEvent(
+      new CustomEvent("layout-item-activate-change", {
+        detail: { id: item.id },
+      })
+    );
+  }
+
+  function onDeactive(event: React.MouseEvent) {
+    event.stopPropagation();
+    window.dispatchEvent(
+      new CustomEvent("layout-item-activate-change", { detail: { id: null } })
+    );
+  }
 
   if (!hasChildren) {
     return (
@@ -38,6 +53,8 @@ function LayoutItem({ item }: { item: RootItem | AnyEmailItem }) {
         item.type !== "root" &&
           "border-l pl-4 relative before:left-0 before:top-5 before:absolute before:w-4 before:h-px before:bg-gray-200"
       )}
+      onMouseOver={onActive}
+      onMouseLeave={onDeactive}
     >
       <AccordionPrimitive.Item value={item.id}>
         <AccordionPrimitive.Header className="flex font-medium items-center gap-2 p-2 -ml-px hover:bg-gray-100 rounded-md">
