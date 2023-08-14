@@ -1,17 +1,56 @@
 import * as AccordionPrimitive from "@radix-ui/react-accordion";
 import { ChevronRightIcon, MailIcon } from "lucide-react";
-
-import { useMailContext, type AnyEmailItem, type RootItem } from "@/store/mail";
+import { useSnapshot } from "valtio";
 
 import { cn } from "@/lib/utils";
+import { useMailContext, type AnyEmailItem, type RootItem } from "@/store/mail";
+import userPrefs from "@/store/pref";
+
+import { Switch } from "../ui/switch";
 import { toolsMap } from "./toolbar";
 
 export default function Layout() {
   const { $mail } = useMailContext();
-  return <LayoutItem item={$mail.value} />;
+
+  return (
+    <div className="flex gap-2 flex-col">
+      <Interactivity />
+      <LayoutItem item={$mail.value} />
+    </div>
+  );
+}
+
+function Interactivity() {
+  const prefs = useSnapshot(userPrefs);
+
+  return (
+    <div className="flex flex-wrap items-center gap-2 p-2">
+      <Switch
+        id="highlight-on-hover"
+        className="data-[state=checked]:bg-indigo-600"
+        checked={prefs.interactiveMode}
+        onCheckedChange={(value) => {
+          userPrefs.interactiveMode = value;
+        }}
+      />
+      <label
+        htmlFor="highlight-on-hover"
+        className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+      >
+        Enable Interactive Mode
+      </label>
+
+      <small className="w-full text-gray-500 font-medium -mt-1 opacity-100">
+        In Interactive mode, when you hover in any of the below item, it will
+        highlight the element on email preview.
+      </small>
+    </div>
+  );
 }
 
 function LayoutItem({ item }: { item: RootItem | AnyEmailItem }) {
+  const prefs = useSnapshot(userPrefs);
+
   const hasChildren = "children" in item;
 
   const { icon: Icon, label } =
@@ -53,8 +92,8 @@ function LayoutItem({ item }: { item: RootItem | AnyEmailItem }) {
         item.type !== "root" &&
           "border-l pl-4 relative before:left-0 before:top-5 before:absolute before:w-4 before:h-px before:bg-gray-200"
       )}
-      onMouseOver={onActive}
-      onMouseLeave={onDeactive}
+      onMouseOver={prefs.interactiveMode ? onActive : undefined}
+      onMouseLeave={prefs.interactiveMode ? onDeactive : undefined}
     >
       <AccordionPrimitive.Item value={item.id}>
         <AccordionPrimitive.Header className="flex font-medium items-center gap-2 p-2 -ml-px hover:bg-gray-100 rounded-md">

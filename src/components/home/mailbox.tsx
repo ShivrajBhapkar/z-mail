@@ -1,12 +1,14 @@
 import { render } from "@react-email/render";
-import { useAnimate, useReducedMotion } from "framer-motion";
+import { useAnimate } from "framer-motion";
 import { ElementRef, useEffect, useRef } from "react";
 
 import Mail from "@/components/home/mail";
+import userPrefs from "@/store/pref";
+import { useSnapshot } from "valtio";
 
 export default function MailBox() {
   const ref = useRef<ElementRef<"iframe">>(null);
-  const reduce = useReducedMotion();
+  const prefs = useSnapshot(userPrefs);
 
   return (
     <div className="flex justify-center relative overflow-hidden">
@@ -17,7 +19,9 @@ export default function MailBox() {
         srcDoc={render(<Mail />)}
       />
 
-      {!reduce ? <Highlighter getFrameDoc={() => ref.current} /> : null}
+      {prefs.interactiveMode ? (
+        <Highlighter getFrameDoc={() => ref.current} />
+      ) : null}
     </div>
   );
 }
