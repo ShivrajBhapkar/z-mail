@@ -32,41 +32,30 @@ function Highlighter({
   getFrameDoc: () => HTMLIFrameElement | undefined | null;
 }) {
   const [ref, animate] = useAnimate();
+  const ui = useSnapshot(uiStore);
 
   useEffect(() => {
-    function onActivate(e: Event): void {
-      const iframe = getFrameDoc();
+    const iframe = getFrameDoc();
 
-      if (
-        !(e instanceof CustomEvent) ||
-        !e.detail.id ||
-        !iframe?.contentDocument
-      ) {
-        animate(ref.current, { opacity: 0 });
-        return;
-      }
-
-      const { id } = e.detail;
-      const element = iframe.contentDocument.getElementById(id);
-
-      if (!element) return;
-
-      const rect = element.getBoundingClientRect();
-
-      animate(ref.current, {
-        x: rect.x,
-        y: rect.y,
-        scaleX: rect.width,
-        scaleY: rect.height,
-        opacity: 1,
-      });
+    if (!iframe?.contentDocument || !ui.hoveredItem) {
+      animate(ref.current, { opacity: 0 });
+      return;
     }
 
-    window.addEventListener("layout-item-activate-change", onActivate);
+    const element = iframe.contentDocument.getElementById(ui.hoveredItem);
 
-    return () =>
-      window.removeEventListener("layout-item-activate-change", onActivate);
-  }, []);
+    if (!element) return;
+
+    const rect = element.getBoundingClientRect();
+
+    animate(ref.current, {
+      x: rect.x,
+      y: rect.y,
+      scaleX: rect.width,
+      scaleY: rect.height,
+      opacity: 1,
+    });
+  }, [ui.hoveredItem]);
 
   return (
     <div

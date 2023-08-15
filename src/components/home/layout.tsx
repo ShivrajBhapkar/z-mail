@@ -1,6 +1,7 @@
 import * as AccordionPrimitive from "@radix-ui/react-accordion";
 import { ChevronRightIcon, MailIcon } from "lucide-react";
 import { useSnapshot } from "valtio";
+import { useProxy } from "valtio/utils";
 
 import { cn } from "@/lib/utils";
 import { useMailContext, type AnyEmailItem, type RootItem } from "@/store/mail";
@@ -52,7 +53,7 @@ function Interactivity() {
 function LayoutItem({ item }: { item: RootItem | AnyEmailItem }) {
   const { $mail } = useMailContext();
 
-  const ui = useSnapshot(uiStore);
+  const ui = useProxy(uiStore);
 
   const hasChildren = "children" in item;
 
@@ -63,18 +64,14 @@ function LayoutItem({ item }: { item: RootItem | AnyEmailItem }) {
 
   function onActive(event: React.MouseEvent) {
     event.stopPropagation();
-    window.dispatchEvent(
-      new CustomEvent("layout-item-activate-change", {
-        detail: { id: item.id },
-      })
-    );
+    ui.hoveredItem = item.id;
   }
 
   function onDeactive(event: React.MouseEvent) {
-    event.stopPropagation();
-    window.dispatchEvent(
-      new CustomEvent("layout-item-activate-change", { detail: { id: null } })
-    );
+    if (ui.hoveredItem === item.id) {
+      event.stopPropagation();
+      ui.hoveredItem = null;
+    }
   }
 
   if (!hasChildren) {
