@@ -50,6 +50,8 @@ function Interactivity() {
 }
 
 function LayoutItem({ item }: { item: RootItem | AnyEmailItem }) {
+  const { $mail } = useMailContext();
+
   const prefs = useSnapshot(userPrefs);
 
   const hasChildren = "children" in item;
@@ -106,7 +108,7 @@ function LayoutItem({ item }: { item: RootItem | AnyEmailItem }) {
 
         <AccordionPrimitive.Content className="pl-4 flex flex-col">
           {item.children.map((child) => (
-            <LayoutItem key={child.id} item={child} />
+            <LayoutItem key={child} item={$mail.value.items[child]} />
           ))}
         </AccordionPrimitive.Content>
       </AccordionPrimitive.Item>

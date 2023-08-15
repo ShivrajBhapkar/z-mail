@@ -56,39 +56,38 @@ export type LinkItem = {
 export type ContainerItem = {
   id: string;
   type: MailItemType.Container;
-  children: (
-    | ButtonItem
-    | TextItem
-    | HeadingItem
-    | SeparatorItem
-    | ImageItem
-    | LinkItem
-  )[];
+  children: string[];
 };
 
 export type ColumnItem = {
   id: string;
   type: MailItemType.Column;
-  children: ContainerItem[];
+  children: string[];
 };
 
 export type SectionItem = {
   id: string;
   type: MailItemType.Section;
-  children: ColumnItem[];
+  children: string[];
 };
 
 export type RootItem = {
   id: string;
   type: "root";
-  children: SectionItem[];
+  children: string[];
+  items: Record<string, AnyEmailItem>;
   props: {
     width: number;
   };
 };
 
 export type AnyEmailItem =
-  | SectionItem
-  | ColumnItem
+  | ButtonItem
+  | TextItem
+  | HeadingItem
+  | SeparatorItem
+  | ImageItem
+  | LinkItem
   | ContainerItem
-  | ContainerItem["children"][number];
+  | ColumnItem
+  | SectionItem;

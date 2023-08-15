@@ -19,12 +19,14 @@ export default function Mail() {
 }
 
 function MailItem({ item }: { item: RootItem | AnyEmailItem }) {
+  const { $mail } = useMailContext();
+
   if (item.type === "root") {
     return (
       <Html data-item-type={item.type}>
         <Container id={item.id}>
           {item.children.map((child) => (
-            <MailItem key={child.id} item={child} />
+            <MailItem key={child} item={$mail.value.items[child]} />
           ))}
         </Container>
       </Html>
@@ -35,7 +37,7 @@ function MailItem({ item }: { item: RootItem | AnyEmailItem }) {
     return (
       <Section id={item.id}>
         {item.children.map((child) => (
-          <MailItem key={child.id} item={child} />
+          <MailItem key={child} item={$mail.value.items[child]} />
         ))}
       </Section>
     );
@@ -45,7 +47,7 @@ function MailItem({ item }: { item: RootItem | AnyEmailItem }) {
     return (
       <Column data-item-type={item.type} id={item.id} width={300}>
         {item.children.map((child) => (
-          <MailItem key={child.id} item={child} />
+          <MailItem key={child} item={$mail.value.items[child]} />
         ))}
       </Column>
     );
@@ -55,7 +57,7 @@ function MailItem({ item }: { item: RootItem | AnyEmailItem }) {
     return (
       <Container data-item-type={item.type} id={item.id}>
         {item.children.map((child) => (
-          <MailItem key={child.id} item={child} />
+          <MailItem key={child} item={$mail.value.items[child]} />
         ))}
       </Container>
     );
