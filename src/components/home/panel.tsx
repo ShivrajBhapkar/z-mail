@@ -3,7 +3,7 @@ import Layout from "./layout";
 
 export default function Panel() {
   return (
-    <Tabs defaultValue="layout" className="p-3">
+    <Tabs defaultValue="layout" className="p-3 border-l">
       <TabsList>
         <TabsTrigger value="layout">Layout</TabsTrigger>
         <TabsTrigger value="properties">Properties</TabsTrigger>
