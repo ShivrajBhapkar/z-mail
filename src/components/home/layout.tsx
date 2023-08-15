@@ -4,7 +4,7 @@ import { useSnapshot } from "valtio";
 
 import { cn } from "@/lib/utils";
 import { useMailContext, type AnyEmailItem, type RootItem } from "@/store/mail";
-import userPrefs from "@/store/pref";
+import uiStore from "@/store/ui/ui.store";
 
 import { Switch } from "../ui/switch";
 import { toolsMap } from "./toolbar";
@@ -21,16 +21,16 @@ export default function Layout() {
 }
 
 function Interactivity() {
-  const prefs = useSnapshot(userPrefs);
+  const ui = useSnapshot(uiStore);
 
   return (
     <div className="flex flex-wrap items-center gap-2 p-2">
       <Switch
         id="highlight-on-hover"
         className="data-[state=checked]:bg-indigo-600"
-        checked={prefs.interactiveMode}
+        checked={ui.interactiveMode}
         onCheckedChange={(value) => {
-          userPrefs.interactiveMode = value;
+          uiStore.interactiveMode = value;
         }}
       />
       <label
@@ -52,7 +52,7 @@ function Interactivity() {
 function LayoutItem({ item }: { item: RootItem | AnyEmailItem }) {
   const { $mail } = useMailContext();
 
-  const prefs = useSnapshot(userPrefs);
+  const ui = useSnapshot(uiStore);
 
   const hasChildren = "children" in item;
 
@@ -95,8 +95,8 @@ function LayoutItem({ item }: { item: RootItem | AnyEmailItem }) {
         item.type !== "root" &&
           "border-l pl-4 relative before:left-0 before:top-5 before:absolute before:w-4 before:h-px before:bg-gray-200"
       )}
-      onMouseOver={prefs.interactiveMode ? onActive : undefined}
-      onMouseLeave={prefs.interactiveMode ? onDeactive : undefined}
+      onMouseOver={ui.interactiveMode ? onActive : undefined}
+      onMouseLeave={ui.interactiveMode ? onDeactive : undefined}
     >
       <AccordionPrimitive.Item value={item.id}>
         <AccordionPrimitive.Header className="flex font-medium items-center gap-2 p-2 -ml-px hover:bg-gray-100 rounded-md">

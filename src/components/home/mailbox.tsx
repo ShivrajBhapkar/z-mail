@@ -3,12 +3,12 @@ import { useAnimate } from "framer-motion";
 import { ElementRef, useEffect, useRef } from "react";
 
 import Mail from "@/components/home/mail";
-import userPrefs from "@/store/pref";
+import uiStore from "@/store/ui/ui.store";
 import { useSnapshot } from "valtio";
 
 export default function MailBox() {
   const ref = useRef<ElementRef<"iframe">>(null);
-  const prefs = useSnapshot(userPrefs);
+  const ui = useSnapshot(uiStore);
 
   return (
     <div className="flex justify-center relative overflow-hidden">
@@ -19,7 +19,7 @@ export default function MailBox() {
         srcDoc={render(<Mail />)}
       />
 
-      {prefs.interactiveMode ? (
+      {ui.interactiveMode ? (
         <Highlighter getFrameDoc={() => ref.current} />
       ) : null}
     </div>
