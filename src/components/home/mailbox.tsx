@@ -1,9 +1,10 @@
 import { render } from "@react-email/render";
 import { useAnimate } from "framer-motion";
-import { ElementRef, useEffect, useRef } from "react";
+import { ElementRef, RefObject, useEffect, useRef } from "react";
 
 import Mail from "@/components/home/mail";
 import uiStore from "@/store/ui/ui.store";
+import { useProxy } from "valtio/utils";
 import { useSnapshot } from "valtio";
 
 export default function MailBox() {
@@ -20,10 +21,53 @@ export default function MailBox() {
       />
 
       {ui.interactiveMode ? (
-        <Highlighter getFrameDoc={() => ref.current} />
+        <>
+          <FrameItemActivator iframeRef={ref} />
+          <Highlighter getFrameDoc={() => ref.current} />
+        </>
       ) : null}
     </div>
   );
+}
+
+function FrameItemActivator({
+  iframeRef,
+}: {
+  iframeRef: RefObject<HTMLIFrameElement | null>;
+}) {
+  const ui = useProxy(uiStore);
+
+  useEffect(() => {
+    const _window = iframeRef.current?.contentWindow;
+    if (!_window) return;
+
+    const onClick = (e: MouseEvent) => {
+      const path = e.composedPath();
+
+      let possibleMailItem: HTMLElement | undefined;
+
+      for (const pathItem of path) {
+        if (
+          "hasAttribute" in pathItem &&
+          typeof pathItem.hasAttribute === "function" &&
+          pathItem.hasAttribute("data-item-type")
+        ) {
+          possibleMailItem = pathItem as HTMLElement;
+          break;
+        }
+      }
+
+      if (!possibleMailItem) return;
+
+      ui.selectedItemId = possibleMailItem.id;
+    };
+
+    _window.addEventListener("click", onClick);
+
+    return () => _window.removeEventListener("click", onClick);
+  }, [iframeRef]);
+
+  return null;
 }
 
 function Highlighter({
