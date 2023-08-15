@@ -14,44 +14,44 @@ export function init(): RootItem {
     items: {
       "item-1": {
         type: MailItemType.Section,
-        id: crypto.randomUUID(),
+        id: "item-1",
         children: ["item-2"],
       },
       "item-4.5": {
         type: MailItemType.Section,
-        id: crypto.randomUUID(),
+        id: "item-4.5",
         children: ["item-5"],
       },
       "item-2": {
         type: MailItemType.Column,
-        id: crypto.randomUUID(),
+        id: "item-2",
         children: ["item-3"],
       },
       "item-3": {
         type: MailItemType.Container,
-        id: crypto.randomUUID(),
+        id: "item-3",
         children: ["item-4"],
       },
       "item-5": {
         type: MailItemType.Column,
-        id: crypto.randomUUID(),
+        id: "item-5",
         children: ["item-6"],
       },
       "item-6": {
         type: MailItemType.Container,
-        id: crypto.randomUUID(),
+        id: "item-6",
         children: ["item-7"],
       },
       "item-4": {
         type: MailItemType.Image,
-        id: crypto.randomUUID(),
+        id: "item-4",
         src: "https://images.unsplash.com/photo-1691689761334-3354040b72be?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=600&h=300&q=80",
         width: 600,
         height: 300,
       },
       "item-7": {
         type: MailItemType.Image,
-        id: crypto.randomUUID(),
+        id: "item-7",
         src: "https://images.unsplash.com/photo-1691689761334-3354040b72be?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=600&h=300&q=80",
         width: 600,
         height: 300,

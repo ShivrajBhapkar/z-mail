@@ -1,5 +1,6 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs";
 import Layout from "./layout";
+import Properties from "./properties";
 
 export default function Panel() {
   return (
@@ -14,7 +15,7 @@ export default function Panel() {
       </TabsContent>
 
       <TabsContent value="properties">
-        <div>Properties</div>
+        <Properties />
       </TabsContent>
     </Tabs>
   );

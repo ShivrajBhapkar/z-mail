@@ -1,8 +1,9 @@
 import { proxy } from "valtio";
 
-const userPrefs = proxy({
+const uiStore = proxy({
   interactiveMode: true,
   hoveredItem: null as string | null,
+  selectedItemId: null as string | null,
 });
 
-export default userPrefs;
+export default uiStore;

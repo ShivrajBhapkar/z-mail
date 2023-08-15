@@ -76,11 +76,15 @@ function LayoutItem({ item }: { item: RootItem | AnyEmailItem }) {
 
   if (!hasChildren) {
     return (
-      <div className="flex flex-col gap-0.5 text-sm border-l pl-4 relative before:left-0 before:top-5 before:absolute before:w-4 before:h-px before:bg-gray-200">
+      <button
+        type="button"
+        onClick={() => (ui.selectedItemId = item.id)}
+        className="flex flex-col gap-0.5 text-sm border-l pl-4 relative before:left-0 before:top-5 before:absolute before:w-4 before:h-px before:bg-gray-200"
+      >
         <div className="flex font-medium items-center gap-2 p-2 -ml-1 hover:bg-gray-100 rounded-md">
           <Icon className="w-4 h-4" /> {label}
         </div>
-      </div>
+      </button>
     );
   }
 
@@ -100,7 +104,12 @@ function LayoutItem({ item }: { item: RootItem | AnyEmailItem }) {
           <AccordionPrimitive.Trigger asChild>
             <ChevronRightIcon className="w-5 h-5 origin-center transition-transform data-[state=open]:rotate-90" />
           </AccordionPrimitive.Trigger>
-          <Icon className="w-4 h-4 text-gray-500" /> {label}
+          <button
+            onClick={() => (ui.selectedItemId = item.id)}
+            className="flex items-center gap-2"
+          >
+            <Icon className="w-4 h-4 text-gray-500" /> {label}
+          </button>
         </AccordionPrimitive.Header>
 
         <AccordionPrimitive.Content className="pl-4 flex flex-col">
