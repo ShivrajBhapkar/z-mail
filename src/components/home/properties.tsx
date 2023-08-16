@@ -1,9 +1,10 @@
 import { useMemo } from "react";
+import { useAtom } from "jotai";
 import { motion } from "framer-motion";
 import { ChevronRightIcon } from "lucide-react";
 
 import { RootItem, useMailContext } from "@/store/mail";
-import { useUI } from "@/store/ui/ui.store";
+import { activeItemAtom } from "@/store/ui/ui.store";
 
 const getMailItem = ($mail: RootItem, id: string) =>
   id === $mail.id ? $mail : $mail.items[id];
@@ -11,8 +12,7 @@ const getMailItem = ($mail: RootItem, id: string) =>
 export default function Properties() {
   const { $mail } = useMailContext();
 
-  const ui = useUI();
-  const activeId = ui.selectedItem.use();
+  const [activeId, setActiveId] = useAtom(activeItemAtom);
 
   const active = activeId ? getMailItem($mail.value, activeId) : $mail.value;
 
@@ -41,7 +41,7 @@ export default function Properties() {
               <button
                 className="flex items-center"
                 onClick={() => {
-                  ui.selectedItem.set(path.id);
+                  setActiveId(path.id);
                 }}
               >
                 <ChevronRightIcon size={14} className="mt-0.5 mx-1" />

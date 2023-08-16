@@ -1,1 +1,1 @@
-export { UIProvider, UIContext } from "./ui.store";
+export * from "./ui.store";
