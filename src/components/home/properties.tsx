@@ -1,20 +1,20 @@
-import { RootItem, useMailContext } from "@/store/mail";
-import uiStore from "@/store/ui";
+import { useMemo } from "react";
 import { motion } from "framer-motion";
 import { ChevronRightIcon } from "lucide-react";
-import { useMemo } from "react";
-import { useProxy } from "valtio/utils";
+
+import { RootItem, useMailContext } from "@/store/mail";
+import { useUI } from "@/store/ui/ui.store";
 
 const getMailItem = ($mail: RootItem, id: string) =>
   id === $mail.id ? $mail : $mail.items[id];
 
 export default function Properties() {
-  const ui = useProxy(uiStore);
   const { $mail } = useMailContext();
 
-  const active = ui.selectedItemId
-    ? getMailItem($mail.value, ui.selectedItemId)
-    : $mail.value;
+  const ui = useUI();
+  const activeId = ui.selectedItem.use();
+
+  const active = activeId ? getMailItem($mail.value, activeId) : $mail.value;
 
   const paths = useMemo(() => {
     let current = active;
@@ -25,10 +25,10 @@ export default function Properties() {
     }
     _paths.reverse().pop();
     return _paths;
-  }, [$mail, active]);
+  }, [activeId]);
 
   return (
-    <div className="py-3 flex flex-col gap-3">
+    <div className="py-3 flex flex-col gap-0.5">
       {paths.length ? (
         <motion.ol
           initial={{ opacity: 0 }}
@@ -41,7 +41,7 @@ export default function Properties() {
               <button
                 className="flex items-center"
                 onClick={() => {
-                  ui.selectedItemId = path.id;
+                  ui.selectedItem.set(path.id);
                 }}
               >
                 <ChevronRightIcon size={14} className="mt-0.5 mx-1" />

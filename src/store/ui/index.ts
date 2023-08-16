@@ -1,1 +1,1 @@
-export { default } from "./ui.store";
+export { UIProvider, UIContext } from "./ui.store";

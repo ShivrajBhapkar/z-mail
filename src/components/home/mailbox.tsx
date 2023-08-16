@@ -1,15 +1,14 @@
-import { render } from "@react-email/render";
-import { useAnimate } from "framer-motion";
 import { ElementRef, RefObject, useEffect, useRef } from "react";
+import { useAnimate } from "framer-motion";
+import { render } from "@react-email/render";
+import { Show, useObserveEffect } from "@legendapp/state/react";
 
 import Mail from "@/components/home/mail";
-import uiStore from "@/store/ui/ui.store";
-import { useProxy } from "valtio/utils";
-import { useSnapshot } from "valtio";
+import { useUI } from "@/store/ui/ui.store";
 
 export default function MailBox() {
   const ref = useRef<ElementRef<"iframe">>(null);
-  const ui = useSnapshot(uiStore);
+  const ui = useUI();
 
   return (
     <div className="flex justify-center relative overflow-hidden">
@@ -20,12 +19,10 @@ export default function MailBox() {
         srcDoc={render(<Mail />)}
       />
 
-      {ui.interactiveMode ? (
-        <>
-          <FrameItemActivator iframeRef={ref} />
-          <Highlighter getFrameDoc={() => ref.current} />
-        </>
-      ) : null}
+      <Show if={ui.interactiveMode}>
+        <FrameItemActivator iframeRef={ref} />
+        <Highlighter getFrameDoc={() => ref.current} />
+      </Show>
     </div>
   );
 }
@@ -35,7 +32,7 @@ function FrameItemActivator({
 }: {
   iframeRef: RefObject<HTMLIFrameElement | null>;
 }) {
-  const ui = useProxy(uiStore);
+  const ui = useUI();
 
   useEffect(() => {
     const _window = iframeRef.current?.contentWindow;
@@ -43,6 +40,8 @@ function FrameItemActivator({
 
     const onClick = (e: MouseEvent) => {
       const path = e.composedPath();
+
+      console.log(path);
 
       let possibleMailItem: HTMLElement | undefined;
 
@@ -59,10 +58,12 @@ function FrameItemActivator({
 
       if (!possibleMailItem) return;
 
-      ui.selectedItemId = possibleMailItem.id;
+      ui.selectedItem.set(possibleMailItem.id);
     };
 
-    _window.addEventListener("click", onClick);
+    iframeRef.current.addEventListener("load", () => {
+      _window.addEventListener("click", onClick);
+    });
 
     return () => _window.removeEventListener("click", onClick);
   }, [iframeRef]);
@@ -76,17 +77,17 @@ function Highlighter({
   getFrameDoc: () => HTMLIFrameElement | undefined | null;
 }) {
   const [ref, animate] = useAnimate();
-  const ui = useSnapshot(uiStore);
+  const ui = useUI();
 
-  useEffect(() => {
+  useObserveEffect(() => {
     const iframe = getFrameDoc();
 
-    if (!iframe?.contentDocument || !ui.hoveredItem) {
+    if (!iframe?.contentDocument || !ui.hoveredItem.get()) {
       animate(ref.current, { opacity: 0 });
       return;
     }
 
-    const element = iframe.contentDocument.getElementById(ui.hoveredItem);
+    const element = iframe.contentDocument.getElementById(ui.hoveredItem.get());
 
     if (!element) return;
 
@@ -99,7 +100,7 @@ function Highlighter({
       scaleY: rect.height,
       opacity: 1,
     });
-  }, [ui.hoveredItem]);
+  });
 
   return (
     <div
