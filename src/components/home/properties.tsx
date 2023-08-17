@@ -1,27 +1,27 @@
 import { useMemo } from "react";
-import { useAtom } from "jotai";
+import { useAtom, useAtomValue } from "jotai";
 import { motion } from "framer-motion";
 import { ChevronRightIcon } from "lucide-react";
 
-import { RootItem, useMailContext } from "@/store/mail";
+import { RootItem, mailAtom } from "@/store/mail";
 import { activeItemAtom } from "@/store/ui/ui.store";
 
 const getMailItem = ($mail: RootItem, id: string) =>
   id === $mail.id ? $mail : $mail.items[id];
 
 export default function Properties() {
-  const { $mail } = useMailContext();
+  const $mail = useAtomValue(mailAtom);
 
   const [activeId, setActiveId] = useAtom(activeItemAtom);
 
-  const active = activeId ? getMailItem($mail.value, activeId) : $mail.value;
+  const active = activeId ? getMailItem($mail, activeId) : $mail;
 
   const paths = useMemo(() => {
     let current = active;
     const _paths = [];
     while (current?.parentId) {
       _paths.push({ id: current.id, type: current.type });
-      current = $mail.value.items[current.parentId];
+      current = $mail.items[current.parentId];
     }
     _paths.reverse().pop();
     return _paths;
@@ -36,16 +36,19 @@ export default function Properties() {
           className="flex items-center whitespace-nowrap min-w-0"
           aria-label="Breadcrumb"
         >
-          {paths.map((path) => (
-            <li className="text-sm text-gray-500 font-medium hover:text-blue-600 last:text-gray-900">
+          {paths.map(({ id, type }) => (
+            <li
+              key={id}
+              className="text-sm text-gray-500 font-medium hover:text-blue-600 last:text-gray-900"
+            >
               <button
                 className="flex items-center"
                 onClick={() => {
-                  setActiveId(path.id);
+                  setActiveId(id);
                 }}
               >
                 <ChevronRightIcon size={14} className="mt-0.5 mx-1" />
-                <span>{path.type}</span>
+                <span>{type}</span>
               </button>
             </li>
           ))}

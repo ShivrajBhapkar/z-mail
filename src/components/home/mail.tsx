@@ -1,4 +1,3 @@
-import { useMailContext } from "@/store/mail/mail.store";
 import { AnyEmailItem, MailItemType, RootItem } from "@/store/mail/types";
 
 import { Button } from "@react-email/button";
@@ -12,21 +11,19 @@ import { Link } from "@react-email/link";
 import { Section } from "@react-email/section";
 import { Text } from "@react-email/text";
 
-export default function Mail() {
-  const { $mail } = useMailContext();
-
-  return <MailItem item={$mail.value} />;
-}
-
-function MailItem({ item }: { item: RootItem | AnyEmailItem }) {
-  const { $mail } = useMailContext();
-
+export default function Mail({
+  item,
+  $mail,
+}: {
+  item: RootItem | AnyEmailItem;
+  $mail: RootItem;
+}) {
   if (item.type === "root") {
     return (
       <Html data-item-type={item.type}>
         <Container id={item.id}>
           {item.children.map((child) => (
-            <MailItem key={child} item={$mail.value.items[child]} />
+            <Mail key={child} item={$mail.items[child]} $mail={$mail} />
           ))}
         </Container>
       </Html>
@@ -37,7 +34,7 @@ function MailItem({ item }: { item: RootItem | AnyEmailItem }) {
     return (
       <Section id={item.id}>
         {item.children.map((child) => (
-          <MailItem key={child} item={$mail.value.items[child]} />
+          <Mail key={child} item={$mail.items[child]} $mail={$mail} />
         ))}
       </Section>
     );
@@ -47,7 +44,7 @@ function MailItem({ item }: { item: RootItem | AnyEmailItem }) {
     return (
       <Column data-item-type={item.type} id={item.id} width={300}>
         {item.children.map((child) => (
-          <MailItem key={child} item={$mail.value.items[child]} />
+          <Mail key={child} item={$mail.items[child]} $mail={$mail} />
         ))}
       </Column>
     );
@@ -57,7 +54,7 @@ function MailItem({ item }: { item: RootItem | AnyEmailItem }) {
     return (
       <Container data-item-type={item.type} id={item.id}>
         {item.children.map((child) => (
-          <MailItem key={child} item={$mail.value.items[child]} />
+          <Mail key={child} item={$mail.items[child]} $mail={$mail} />
         ))}
       </Container>
     );
@@ -80,7 +77,8 @@ function MailItem({ item }: { item: RootItem | AnyEmailItem }) {
   }
 
   if (item.type === MailItemType.Image) {
-    return <Img data-item-type={item.type} {...item} />;
+    const { parentId, type, ...props } = item;
+    return <Img data-item-type={item.type} {...props} />;
   }
 
   if (item.type === MailItemType.Link) {

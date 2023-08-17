@@ -6,12 +6,14 @@ import { activeItemAtom, hoveredItemAtom } from "@/store/ui";
 
 export function Interactors({
   iframeRef,
+  srcdoc,
 }: {
   iframeRef: RefObject<HTMLIFrameElement | null>;
+  srcdoc: string;
 }) {
   return (
     <>
-      <FrameItemActivator iframeRef={iframeRef} />
+      <FrameItemActivator iframeRef={iframeRef} srcdoc={srcdoc} />
       <Highlighter iframeRef={iframeRef} />
     </>
   );
@@ -19,8 +21,10 @@ export function Interactors({
 
 function FrameItemActivator({
   iframeRef,
+  srcdoc,
 }: {
   iframeRef: RefObject<HTMLIFrameElement | null>;
+  srcdoc: string;
 }) {
   const setActiveItem = useSetAtom(activeItemAtom);
 
@@ -30,8 +34,6 @@ function FrameItemActivator({
 
     const onClick = (e: MouseEvent) => {
       const path = e.composedPath();
-
-      console.log(path);
 
       let possibleMailItem: HTMLElement | undefined;
 
@@ -51,12 +53,10 @@ function FrameItemActivator({
       setActiveItem(possibleMailItem.id);
     };
 
-    iframeRef.current.addEventListener("load", () => {
-      _window.addEventListener("click", onClick);
-    });
+    _window.addEventListener("click", onClick);
 
     return () => _window.removeEventListener("click", onClick);
-  }, [iframeRef]);
+  }, [iframeRef, srcdoc]);
 
   return null;
 }
