@@ -3,7 +3,7 @@ import { useAtom, useAtomValue, useSetAtom } from "jotai";
 import { ChevronRightIcon, MailIcon } from "lucide-react";
 
 import { cn } from "@/lib/utils";
-import { mailAtom, type AnyEmailItem, type RootItem } from "@/store/mail";
+import { MailTreeNode, prettyMailAtom } from "@/store/mail";
 import {
   activeItemAtom,
   hoveredItemAtom,
@@ -14,12 +14,12 @@ import { Switch } from "../ui/switch";
 import { toolsMap } from "./toolbar";
 
 export default function Layout() {
-  const $mail = useAtomValue(mailAtom);
+  const mail = useAtomValue(prettyMailAtom);
 
   return (
     <div className="flex flex-col">
       <Interactivity />
-      <LayoutItem item={$mail} $mail={$mail} />
+      {mail ? <LayoutItem item={mail} /> : null}
     </div>
   );
 }
@@ -54,37 +54,31 @@ function Interactivity() {
   );
 }
 
-function LayoutItem({
-  item,
-  $mail,
-}: {
-  item: RootItem | AnyEmailItem;
-  $mail: RootItem;
-}) {
+function LayoutItem({ item: node }: { item: MailTreeNode }) {
   const interactiveMode = useAtomValue(interactiveModeAtom);
   const setHoveredItem = useSetAtom(hoveredItemAtom);
   const setActiveItem = useSetAtom(activeItemAtom);
 
   const { icon: Icon, label } =
-    item.type === "root"
+    node.type === "root"
       ? { icon: MailIcon, label: "Mail" }
-      : toolsMap[item.type];
+      : toolsMap[node.type];
 
   function onHover(e: React.MouseEvent) {
     e.stopPropagation();
-    setHoveredItem(item.id);
+    setHoveredItem(node.id);
   }
 
   function onUnHover(e: React.MouseEvent) {
     e.stopPropagation();
-    setHoveredItem((pre) => (pre === item.id ? null : pre));
+    setHoveredItem((pre) => (pre === node.id ? null : pre));
   }
 
-  if (!("children" in item)) {
+  if (!node.children) {
     return (
       <button
         type="button"
-        onClick={() => setActiveItem(item.id)}
+        onClick={() => setActiveItem(node.id)}
         className="flex flex-col gap-0.5 text-sm w-full border-l pl-4 relative before:left-0 before:top-5 before:absolute before:w-4 before:h-px before:bg-gray-200"
       >
         <div className="flex font-medium items-center gap-2 p-2 -ml-1 hover:bg-gray-100 rounded-md w-full">
@@ -99,28 +93,23 @@ function LayoutItem({
       type="multiple"
       className={cn(
         "flex flex-col gap-0.5 text-sm",
-        item.type !== "root" &&
+        node.type !== "root" &&
           "border-l pl-4 relative before:left-0 before:top-5 before:absolute before:w-4 before:h-px before:bg-gray-200"
       )}
       onMouseOver={interactiveMode ? onHover : undefined}
       onMouseLeave={interactiveMode ? onUnHover : undefined}
     >
-      <AccordionPrimitive.Item value={item.id}>
-        <AccordionPrimitive.Header className="flex font-medium items-center gap-2 p-2 -ml-px hover:bg-gray-100 rounded-md">
-          <AccordionPrimitive.Trigger asChild>
-            <ChevronRightIcon className="w-5 h-5 origin-center transition-transform data-[state=open]:rotate-90" />
-          </AccordionPrimitive.Trigger>
-          <button
-            onClick={() => setActiveItem(item.id)}
-            className="flex items-center gap-2"
-          >
+      <AccordionPrimitive.Item value={node.id}>
+        <AccordionPrimitive.Header>
+          <AccordionPrimitive.Trigger className="flex items-center gap-2 w-full font-medium group p-2 -ml-px hover:bg-gray-100 rounded-md">
+            <ChevronRightIcon className="w-5 h-5 origin-center transition-transform group-data-[state=open]:rotate-90" />
             <Icon className="w-4 h-4 text-gray-500" /> {label}
-          </button>
+          </AccordionPrimitive.Trigger>
         </AccordionPrimitive.Header>
 
         <AccordionPrimitive.Content className="pl-4 flex flex-col">
-          {item.children.map((child) => (
-            <LayoutItem key={child} item={$mail.items[child]} $mail={$mail} />
+          {node.children.map((child) => (
+            <LayoutItem key={child.id} item={child} />
           ))}
         </AccordionPrimitive.Content>
       </AccordionPrimitive.Item>

@@ -14,24 +14,30 @@ export type ButtonItem = {
   id: string;
   parentId: string;
   type: MailItemType.Button;
-  link: string;
-  target?: string;
-  label: string;
+  props: {
+    link: string;
+    target?: string;
+    label: string;
+  };
 };
 
 export type TextItem = {
   id: string;
   parentId: string;
   type: MailItemType.Text;
-  text: string;
+  props: {
+    text: string;
+  };
 };
 
 export type HeadingItem = {
   id: string;
   parentId: string;
   type: MailItemType.Heading;
-  level: 1 | 2 | 3 | 4 | 5 | 6;
-  text: string;
+  props: {
+    level: 1 | 2 | 3 | 4 | 5 | 6;
+    text: string;
+  };
 };
 
 export type SeparatorItem = {
@@ -44,51 +50,54 @@ export type ImageItem = {
   id: string;
   parentId: string;
   type: MailItemType.Image;
-  src: string;
-  width: number;
-  height: number;
-  alt?: string;
+  props: {
+    src: string;
+    width: number;
+    height: number;
+    alt?: string;
+  };
 };
 
 export type LinkItem = {
   id: string;
   parentId: string;
   type: MailItemType.Link;
-  href: string;
-  label: string;
-  target?: string;
+  props: {
+    href: string;
+    label: string;
+    target?: string;
+  };
 };
 
 export type ContainerItem = {
   id: string;
   parentId: string;
   type: MailItemType.Container;
-  children: string[];
+  children: Array<string>;
 };
 
 export type ColumnItem = {
   id: string;
   parentId: string;
   type: MailItemType.Column;
-  children: string[];
+  children: Array<string>;
 };
 
 export type SectionItem = {
   id: string;
   parentId: string;
   type: MailItemType.Section;
-  children: string[];
+  children: Array<string>;
 };
 
 export type RootItem = {
   id: string;
   parentId: null;
   type: "root";
-  children: string[];
-  items: Record<string, AnyEmailItem>;
   props: {
     width: number;
   };
+  children: Array<string>;
 };
 
 export type AnyEmailItem =
@@ -100,4 +109,11 @@ export type AnyEmailItem =
   | LinkItem
   | ContainerItem
   | ColumnItem
-  | SectionItem;
+  | SectionItem
+  | RootItem;
+
+export type TMailBox = {
+  id?: string;
+  rootId: string;
+  items: Record<string, AnyEmailItem>;
+};

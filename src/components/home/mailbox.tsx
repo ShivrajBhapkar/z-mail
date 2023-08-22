@@ -1,18 +1,15 @@
-import { ElementRef, useMemo, useRef } from "react";
-import { useAtomValue } from "jotai";
 import { render } from "@react-email/render";
+import { useAtomValue } from "jotai";
+import { ElementRef, useMemo, useRef } from "react";
 
 import Mail from "@/components/home/mail";
+import { prettyMailAtom } from "@/store/mail";
 import { Interactors } from "./interactors";
-import { mailAtom } from "@/store/mail";
 
 export default function MailBox() {
   const ref = useRef<ElementRef<"iframe">>(null);
-  const $mail = useAtomValue(mailAtom);
-  const srcdoc = useMemo(
-    () => render(<Mail $mail={$mail} item={$mail} />),
-    [$mail]
-  );
+  const mail = useAtomValue(prettyMailAtom);
+  const srcdoc = useMemo(() => render(<Mail node={mail} />), [mail]);
 
   return (
     <div className="flex justify-center relative overflow-hidden">
