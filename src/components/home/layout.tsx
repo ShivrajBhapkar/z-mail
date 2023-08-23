@@ -1,6 +1,6 @@
 import * as AccordionPrimitive from "@radix-ui/react-accordion";
 import { useAtom, useAtomValue, useSetAtom } from "jotai";
-import { ChevronRightIcon, MailIcon } from "lucide-react";
+import { CheckCheckIcon, ChevronRightIcon, MailIcon } from "lucide-react";
 
 import { cn } from "@/lib/utils";
 import { MailTreeNode, prettyMailAtom } from "@/store/mail";
@@ -57,7 +57,9 @@ function Interactivity() {
 function LayoutItem({ item: node }: { item: MailTreeNode }) {
   const interactiveMode = useAtomValue(interactiveModeAtom);
   const setHoveredItem = useSetAtom(hoveredItemAtom);
-  const setActiveItem = useSetAtom(activeItemAtom);
+  const [activeItem, setActiveItem] = useAtom(activeItemAtom);
+
+  const isActive = activeItem === node.id;
 
   const { icon: Icon, label } =
     node.type === "root"
@@ -74,6 +76,14 @@ function LayoutItem({ item: node }: { item: MailTreeNode }) {
     setHoveredItem((pre) => (pre === node.id ? null : pre));
   }
 
+  const indicator = isActive ? (
+    <CheckCheckIcon
+      size={16}
+      className="absolute right-3 top-2/4 -translate-y-2/4 text-indigo-600"
+      aria-label="active item"
+    />
+  ) : null;
+
   if (!node.children) {
     return (
       <button
@@ -81,9 +91,17 @@ function LayoutItem({ item: node }: { item: MailTreeNode }) {
         onClick={() => setActiveItem(node.id)}
         className="flex flex-col gap-0.5 text-sm w-full border-l pl-4 relative before:left-0 before:top-5 before:absolute before:w-4 before:h-px before:bg-gray-200"
       >
-        <div className="flex font-medium items-center gap-2 p-2 -ml-1 hover:bg-gray-100 rounded-md w-full">
-          <Icon className="w-4 h-4" /> {label}
+        <div
+          className={cn(
+            "flex font-medium items-center gap-2 p-2 -ml-1  rounded-md w-full",
+            isActive ? "bg-indigo-50 text-indigo-800" : "hover:bg-gray-100"
+          )}
+        >
+          <Icon className={cn("w-4 h-4", !isActive && "text-gray-500")} />
+          {label}
         </div>
+
+        {indicator}
       </button>
     );
   }
@@ -98,12 +116,27 @@ function LayoutItem({ item: node }: { item: MailTreeNode }) {
       )}
       onMouseOver={interactiveMode ? onHover : undefined}
       onMouseLeave={interactiveMode ? onUnHover : undefined}
+      onValueChange={(items) => {
+        const isOpen = items.some((item) => item === node.id);
+        if (isOpen) {
+          setActiveItem(node.id);
+        } else {
+          setActiveItem((current) => (current === node.id ? null : current));
+        }
+      }}
     >
       <AccordionPrimitive.Item value={node.id}>
         <AccordionPrimitive.Header>
-          <AccordionPrimitive.Trigger className="flex items-center gap-2 w-full font-medium group p-2 -ml-px hover:bg-gray-100 rounded-md">
+          <AccordionPrimitive.Trigger
+            className={cn(
+              "flex items-center gap-2 relative w-full font-medium group p-2 -ml-px rounded-md",
+              isActive ? "bg-indigo-50 text-indigo-800" : "hover:bg-gray-100"
+            )}
+          >
             <ChevronRightIcon className="w-5 h-5 origin-center transition-transform group-data-[state=open]:rotate-90" />
-            <Icon className="w-4 h-4 text-gray-500" /> {label}
+            <Icon className={cn("w-4 h-4", !isActive && "text-gray-500")} />
+            {label}
+            {indicator}
           </AccordionPrimitive.Trigger>
         </AccordionPrimitive.Header>
 
