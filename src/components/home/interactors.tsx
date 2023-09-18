@@ -61,7 +61,7 @@ function FrameItemActivator({
   return null;
 }
 
-function Highlighter({
+export function Highlighter({
   iframeRef,
 }: {
   iframeRef: RefObject<HTMLIFrameElement | null>;
@@ -73,8 +73,17 @@ function Highlighter({
   useEffect(() => {
     const iframe = iframeRef.current;
 
+    if (!ref.current) {
+      return;
+    }
+
+    console.log(ref.current);
+
     if (!iframe?.contentDocument || !hoveredItem) {
-      animate(ref.current, { opacity: 0 });
+      animate(ref.current, {
+        opacity: 0,
+        display: "none",
+      });
       return;
     }
 
@@ -85,6 +94,7 @@ function Highlighter({
     const rect = element.getBoundingClientRect();
 
     animate(ref.current, {
+      display: "block",
       x: rect.x,
       y: rect.y,
       scaleX: rect.width,

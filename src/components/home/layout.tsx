@@ -109,6 +109,7 @@ function LayoutItem({ item: node }: { item: MailTreeNode }) {
   return (
     <AccordionPrimitive.Root
       type="multiple"
+      defaultValue={[node.id]}
       className={cn(
         "flex flex-col gap-0.5 text-sm",
         node.type !== "root" &&

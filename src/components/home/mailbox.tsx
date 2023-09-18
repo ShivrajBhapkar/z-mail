@@ -1,26 +1,44 @@
-import { render } from "@react-email/render";
+import * as Portal from "@radix-ui/react-portal";
 import { useAtomValue } from "jotai";
-import { ElementRef, useMemo, useRef } from "react";
+import { useId, useState } from "react";
 
 import Mail from "@/components/home/mail";
+import { Highlight } from "@/hooks/useHighlighter";
 import { prettyMailAtom } from "@/store/mail";
-import { Interactors } from "./interactors";
+import { interactiveModeAtom } from "@/store/ui";
 
 export default function MailBox() {
-  const ref = useRef<ElementRef<"iframe">>(null);
+  const id = useId();
+
+  const [loaded, setLoaded] = useState(false);
+
   const mail = useAtomValue(prettyMailAtom);
-  const srcdoc = useMemo(() => render(<Mail node={mail} />), [mail]);
+  const isInteractiveMode = useAtomValue(interactiveModeAtom);
 
   return (
     <div className="flex justify-center relative overflow-hidden">
       <iframe
-        ref={ref}
+        id={id}
         title="Mail Preview"
         className="h-full w-full"
-        srcDoc={srcdoc}
+        onLoad={() => {
+          setLoaded(true);
+        }}
       />
 
-      <Interactors iframeRef={ref} srcdoc={srcdoc} />
+      {loaded && mail ? (
+        <>
+          <Portal.Root container={getFrame(id)?.contentDocument?.body}>
+            <Mail node={mail} />
+          </Portal.Root>
+
+          {isInteractiveMode ? <Highlight frameId={id} /> : null}
+        </>
+      ) : null}
     </div>
   );
+}
+
+function getFrame(id: string) {
+  return document.getElementById(id) as HTMLIFrameElement | undefined;
 }

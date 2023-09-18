@@ -22,7 +22,7 @@ import {
   TooltipTrigger,
 } from "../ui/tooltip";
 import { Column } from "@react-email/column";
-import { Section } from "@react-email/section";
+import { Row } from "@react-email/row";
 import { Hr } from "@react-email/hr";
 import { Img } from "@react-email/img";
 import { Link } from "@react-email/link";
@@ -42,7 +42,7 @@ export const tools = [
     type: MailItemType.Section,
     label: "Section",
     icon: BoxIcon,
-    component: Section,
+    component: Row,
   },
   {
     type: MailItemType.Container,
@@ -81,7 +81,9 @@ export const toolsMap = tools.reduce(
       label: "Mail",
       icon: MailboxIcon,
       component: (props: PropsWithChildren<{ id: string }>) => (
-        <div id={props.id}>{props.children}</div>
+        <div id={props.id} data-item-type="root">
+          {props.children}
+        </div>
       ),
     },
   } as Record<
