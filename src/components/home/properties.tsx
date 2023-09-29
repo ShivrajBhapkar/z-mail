@@ -5,7 +5,7 @@ import { mailAtom } from "@/store/mail";
 import { activeItemAtom } from "@/store/ui";
 
 export default function Properties() {
-  const [mail, setMail] = useAtom(mailAtom);
+  const [mail] = useAtom(mailAtom);
   const activeId = useAtomValue(activeItemAtom);
   const activeItem = useMemo(
     () => mail.items[activeId ?? mail.rootId],

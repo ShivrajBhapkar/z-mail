@@ -12,6 +12,7 @@ import {
   TextIcon,
 } from "lucide-react";
 
+import { cn } from "@/lib/utils";
 import { useDraggable } from "@dnd-kit/core";
 import { Column } from "@react-email/column";
 import { Container } from "@react-email/container";
@@ -29,8 +30,6 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "../ui/tooltip";
-import { motion } from "framer-motion";
-import { cn } from "@/lib/utils";
 
 export const tools = [
   {
