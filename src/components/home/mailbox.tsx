@@ -6,6 +6,7 @@ import Mail from "@/components/home/mail";
 import { Highlight } from "@/hooks/useHighlighter";
 import { prettyMailAtom } from "@/store/mail";
 import { interactiveModeAtom } from "@/store/ui";
+import DropPreview from "./drop-preview";
 
 export default function MailBox() {
   const id = useId();
@@ -20,7 +21,7 @@ export default function MailBox() {
       <iframe
         id={id}
         title="Mail Preview"
-        className="h-full w-full"
+        className="h-full w-full z-0"
         onLoad={() => {
           setLoaded(true);
         }}
@@ -35,6 +36,8 @@ export default function MailBox() {
           {isInteractiveMode ? <Highlight frameId={id} /> : null}
         </>
       ) : null}
+
+      <DropPreview />
     </div>
   );
 }

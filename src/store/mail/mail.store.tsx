@@ -6,7 +6,7 @@ import { INITIAL } from "./mock";
 import type { AnyEmailItem, TMailBox } from ".";
 
 export type MailTreeNode = Omit<AnyEmailItem, "children"> & {
-  children?: MailTreeNode[];
+  children?: MailTreeNode[] | string;
 };
 
 export const mailAtom = atom<TMailBox>(INITIAL);
@@ -32,9 +32,11 @@ export function walk(
     ...node,
     children:
       "children" in node
-        ? (node.children
-            .map((c) => walk(c, record))
-            .filter(Boolean) as MailTreeNode[])
+        ? typeof node.children === "string"
+          ? node.children
+          : (node.children
+              ?.map((c) => walk(c, record))
+              .filter(Boolean) as MailTreeNode[])
         : undefined,
   };
 }

@@ -17,8 +17,8 @@ export type ButtonItem = {
   props: {
     link: string;
     target?: string;
-    label: string;
   };
+  children: string;
 };
 
 export type TextItem = {
@@ -44,6 +44,7 @@ export type SeparatorItem = {
   id: string;
   parentId: string;
   type: MailItemType.Separator;
+  props: {};
 };
 
 export type ImageItem = {
@@ -73,6 +74,7 @@ export type ContainerItem = {
   id: string;
   parentId: string;
   type: MailItemType.Container;
+  props?: {};
   children: Array<string>;
 };
 
@@ -80,6 +82,7 @@ export type ColumnItem = {
   id: string;
   parentId: string;
   type: MailItemType.Column;
+  props?: {};
   children: Array<string>;
 };
 
@@ -87,6 +90,7 @@ export type SectionItem = {
   id: string;
   parentId: string;
   type: MailItemType.Section;
+  props?: {};
   children: Array<string>;
 };
 

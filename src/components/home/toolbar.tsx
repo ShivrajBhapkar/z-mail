@@ -12,8 +12,16 @@ import {
   TextIcon,
 } from "lucide-react";
 
-import * as ToolbarPrimitive from "@radix-ui/react-toolbar";
-
+import { useDraggable } from "@dnd-kit/core";
+import { Column } from "@react-email/column";
+import { Container } from "@react-email/container";
+import { Heading } from "@react-email/heading";
+import { Hr } from "@react-email/hr";
+import { Img } from "@react-email/img";
+import { Link } from "@react-email/link";
+import { Row } from "@react-email/row";
+import { Text } from "@react-email/text";
+import { PropsWithChildren, forwardRef } from "react";
 import { Button } from "../ui/button";
 import {
   Tooltip,
@@ -21,15 +29,8 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "../ui/tooltip";
-import { Column } from "@react-email/column";
-import { Row } from "@react-email/row";
-import { Hr } from "@react-email/hr";
-import { Img } from "@react-email/img";
-import { Link } from "@react-email/link";
-import { PropsWithChildren } from "react";
-import { Container } from "@react-email/container";
-import { Heading } from "@react-email/heading";
-import { Text } from "@react-email/text";
+import { motion } from "framer-motion";
+import { cn } from "@/lib/utils";
 
 export const tools = [
   {
@@ -80,10 +81,25 @@ export const toolsMap = tools.reduce(
       type: "root",
       label: "Mail",
       icon: MailboxIcon,
-      component: (props: PropsWithChildren<{ id: string }>) => (
-        <div id={props.id} data-item-type="root">
-          {props.children}
-        </div>
+      component: forwardRef<HTMLDivElement, PropsWithChildren<{ id: string }>>(
+        (props, ref) => (
+          <div>
+            <style
+              dangerouslySetInnerHTML={{
+                __html: `
+                [data-over=true]::before {
+                  content: 'Drop here';
+                  height: 80px;
+                  width: 100%:
+                }
+               `,
+              }}
+            />
+            <div id={props.id} data-item-type="root" ref={ref}>
+              {props.children}
+            </div>
+          </div>
+        )
       ),
     },
   } as Record<
@@ -96,32 +112,55 @@ export default function Toolbar() {
   return (
     <aside className="border-r pt-4">
       <TooltipProvider>
-        <ToolbarPrimitive.Root
-          orientation="vertical"
-          className="flex flex-col gap-3 items-center"
-        >
-          {tools.map(({ icon: Icon, label, type }) => (
-            <Tooltip key={type}>
-              <TooltipTrigger asChild>
-                <ToolbarPrimitive.Button asChild>
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    size="icon"
-                    aria-label={label}
-                  >
-                    <Icon className="w-5 h-5" />
-                  </Button>
-                </ToolbarPrimitive.Button>
-              </TooltipTrigger>
+        <ul className="flex flex-col gap-3 items-center">
+          {tools.map((tool) => (
+            <li key={tool.type} className="w-9 h-9">
+              <Tooltip>
+                <TooltipTrigger>
+                  <Tool {...tool} />
+                </TooltipTrigger>
 
-              <TooltipContent side="right" className="ml-1">
-                {label}
-              </TooltipContent>
-            </Tooltip>
+                <TooltipContent side="right" className="ml-1">
+                  {tool.label}
+                </TooltipContent>
+              </Tooltip>
+            </li>
           ))}
-        </ToolbarPrimitive.Root>
+        </ul>
       </TooltipProvider>
     </aside>
+  );
+}
+
+function Tool({ icon: Icon, label, type }: (typeof tools)[number]) {
+  const { setNodeRef, transform, listeners, attributes, isDragging } =
+    useDraggable({
+      id: type,
+      data: {
+        type,
+      },
+    });
+
+  return (
+    <Button
+      type="button"
+      variant="ghost"
+      size="icon"
+      aria-label={label}
+      ref={setNodeRef}
+      {...listeners}
+      {...attributes}
+      style={
+        transform
+          ? ({ "--x": `${transform.x}px`, "--y": `${transform.y}px` } as any)
+          : undefined
+      }
+      className={cn(
+        "tranform-gpu origin-top-left translate-x-[--x] translate-y-[--y]",
+        isDragging ? "z-50 fixed" : ""
+      )}
+    >
+      <Icon className="w-5 h-5" />
+    </Button>
   );
 }

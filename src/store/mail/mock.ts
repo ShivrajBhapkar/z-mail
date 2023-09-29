@@ -46,7 +46,7 @@ export const INITIAL = {
       type: MailItemType.Container,
       id: "item-6",
       parentId: "item-5",
-      children: ["item-7"],
+      children: ["item-7", "item-100"],
     },
     "item-4": {
       type: MailItemType.Image,
@@ -61,6 +61,16 @@ export const INITIAL = {
     "item-7": {
       type: MailItemType.Image,
       id: "item-7",
+      parentId: "item-6",
+      props: {
+        src: "https://images.unsplash.com/photo-1691689761334-3354040b72be?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=600&h=300&q=80",
+        width: 600,
+        height: 300,
+      },
+    },
+    "item-100": {
+      type: MailItemType.Image,
+      id: "item-100",
       parentId: "item-6",
       props: {
         src: "https://images.unsplash.com/photo-1691689761334-3354040b72be?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=600&h=300&q=80",

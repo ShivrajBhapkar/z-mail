@@ -84,7 +84,7 @@ function LayoutItem({ item: node }: { item: MailTreeNode }) {
     />
   ) : null;
 
-  if (!node.children) {
+  if (!node.children || !Array.isArray(node.children)) {
     return (
       <button
         type="button"
@@ -142,9 +142,11 @@ function LayoutItem({ item: node }: { item: MailTreeNode }) {
         </AccordionPrimitive.Header>
 
         <AccordionPrimitive.Content className="pl-4 flex flex-col">
-          {node.children.map((child) => (
-            <LayoutItem key={child.id} item={child} />
-          ))}
+          {typeof node.children === "string"
+            ? null
+            : node.children.map((child) => (
+                <LayoutItem key={child.id} item={child} />
+              ))}
         </AccordionPrimitive.Content>
       </AccordionPrimitive.Item>
     </AccordionPrimitive.Root>
