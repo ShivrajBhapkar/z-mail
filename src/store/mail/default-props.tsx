@@ -10,7 +10,7 @@ export default {
   [MailItemType.Heading]: { props: { level: 1, text: "Edit this heading" } },
   [MailItemType.Image]: {
     props: {
-      src: "/img-placeholder.webp",
+      src: new URL("/img-placeholder.webp", import.meta.url).href,
       width: "600",
       height: "",
       alt: "",

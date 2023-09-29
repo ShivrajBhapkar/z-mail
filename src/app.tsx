@@ -7,6 +7,7 @@ import { DndContext } from "@dnd-kit/core";
 import { mailAtom } from "./store/mail";
 import { acceptance } from "./store/mail/accept-map";
 import defaultProps from "./store/mail/default-props";
+import ExportBtn from "./components/home/export-btn";
 
 function App() {
   const setMailAtom = useSetAtom(mailAtom);
@@ -15,6 +16,7 @@ function App() {
     <main className="grid grid-cols-[4rem_1fr_24rem] grid-rows-[4rem_1fr] w-screen h-screen">
       <header className="border-b col-span-3 flex items-center justify-between px-4">
         <h1 className="font-semibold">Z-Mail</h1>
+        <ExportBtn />
       </header>
 
       <DndContext
