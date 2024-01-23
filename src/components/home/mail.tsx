@@ -10,7 +10,6 @@ import { toolsMap } from "./toolbar";
 
 export default function Mail({ node }: { node: MailTreeNode }) {
   const { active } = useDndContext();
-
   const { setNodeRef } = useDroppable({
     id: node.id,
     data: {

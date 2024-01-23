@@ -17,7 +17,7 @@ export default function MailBox() {
   const isInteractiveMode = useAtomValue(interactiveModeAtom);
 
   return (
-    <div className="flex justify-center relative overflow-x-auto w-[100%]">
+    <div className="flex justify-center relative overflow-hidden">
       <iframe
         id={id}
         title="Mail Preview"
@@ -25,7 +25,6 @@ export default function MailBox() {
         onLoad={() => {
           setLoaded(true);
         }}
-  
       />
 
       {loaded && mail ? (
