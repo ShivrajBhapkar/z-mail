@@ -23,18 +23,13 @@ function App() {
         onDragEnd={(e) => {
           const itemType = e.active.id as any;
           const parentId = e.over?.id.toString();
-
           console.log({ itemType, parentId });
-
           if (!itemType || !parentId) {
             return;
           }
-
           const newItemId = crypto.randomUUID();
-
           setMailAtom((mail) => {
             const parentNode = mail.items[parentId];
-
             if (!acceptance[parentNode.type].includes(itemType)) {
               return mail;
             }
@@ -50,6 +45,7 @@ function App() {
                   ? [...parentNode.children, newItemId]
                   : (parentNode.children as any),
               };
+              
             }
 
             return {
